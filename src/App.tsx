@@ -1,6 +1,6 @@
 import { CalendarClock, CheckCircle2, Filter, Info, School, Send, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Alert, Button, Checkbox, CriteriaBar, EthicsBanner, FavoriteToggle, Field, LevelSlider, Modal, Radio, RoleSwitcher, Status, Tag } from './components/ui'
 import { useApp } from './context/AppContext'
 import { appointmentSlots } from './data/appointments'
@@ -342,9 +342,10 @@ const DossierPage = () => {
 
 const PistesPage = () => {
   const { state } = useApp()
+  const [searchParams, setSearchParams] = useSearchParams()
   const recommendations = getRecommendations(programs, state.student)
   const compareMessage = state.compareIds.length > 1 ? `${state.compareIds.length} formations sélectionnées → Comparer` : 'Choisissez 2 à 3 formations à comparer'
-  const search = new URLSearchParams(window.location.hash.split('?')[1]).get('q') ?? ''
+  const search = searchParams.get('q') ?? ''
   const visible = recommendations.filter((entry) => {
     const program = programs.find((item) => item.id === entry.programId)
     return program?.nom.toLowerCase().includes(search.toLowerCase()) ?? false
@@ -356,7 +357,11 @@ const PistesPage = () => {
         <h2>Vos pistes</h2>
         <label className="search-field">
           <Filter size={16} />
-          <input defaultValue={search} placeholder="Rechercher une formation" onBlur={(event) => window.location.replace(`#${`/pistes?q=${event.target.value}`}`)} />
+          <input
+            defaultValue={search}
+            placeholder="Rechercher une formation"
+            onBlur={(event) => setSearchParams(event.target.value.trim() ? { q: event.target.value.trim() } : {})}
+          />
         </label>
       </div>
       <Alert tone="info">L’affinité est un repère d’exploration, jamais une chance d’admission.</Alert>
