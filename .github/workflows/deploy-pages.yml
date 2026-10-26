@@ -17,7 +17,8 @@ concurrency:
 jobs:
   quality:
     name: Lint, types, tests et build
-    runs-on: ubuntu-latest
+    # Ubuntu 24.04 : version prise en charge par Playwright pour installer Chromium.
+    runs-on: ubuntu-24.04
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
     # Uniquement sur main, et seulement si toutes les vérifications ont réussi.
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       pages: write
       id-token: write
