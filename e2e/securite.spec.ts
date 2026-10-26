@@ -1,0 +1,76 @@
+import { expect, test } from '@playwright/test'
+import { expectPath, go, loginDemo } from './helpers'
+
+test('une route protégée redirige vers la connexion puis revient à la route demandée', async ({ page }) => {
+  await go(page, '/echeances')
+  await expectPath(page, '/connexion')
+  await expect(page.getByText('Connectez-vous pour ouvrir la page demandée.')).toBeVisible()
+  await page.getByLabel('Adresse e-mail').fill('lea.d@exemple.fr')
+  await page.getByLabel('Mot de passe').fill('demo1234')
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click()
+  await expectPath(page, '/echeances')
+  await expect(page.getByRole('heading', { name: 'Mes échéances' })).toBeVisible()
+})
+
+test('un compte d’un autre rôle ne voit pas la page et peut changer d’espace', async ({ page }) => {
+  await loginDemo(page, 'Léa')
+  await go(page, '/conseiller/eleves/u-lea')
+  await expect(page.getByRole('heading', { name: /réservé aux comptes conseiller/ })).toBeVisible()
+  await expect(page.getByText('Points à discuter')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Changer d’espace' }).click()
+  await page.getByRole('dialog', { name: 'Changer d’espace' }).getByRole('button', { name: /Gabriel B\. \(démo\)/ }).click()
+  await expectPath(page, '/conseiller/demandes')
+})
+
+test('« Rester connecté » conserve la session après fermeture de l’onglet', async ({ browser }) => {
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  await loginDemo(page, 'Gabriel')
+  await page.close()
+  const again = await context.newPage()
+  await go(again, '/conseiller/demandes')
+  await expect(again.getByRole('heading', { name: 'Demandes de rendez-vous' })).toBeVisible()
+  await context.close()
+})
+
+test('le mode invité ne simule jamais une action réservée aux comptes', async ({ page }) => {
+  await go(page, '/connexion')
+  await page.getByRole('button', { name: 'Explorer sans compte' }).click()
+  await expectPath(page, '/')
+  await expect(page.getByText('Mode invité').first()).toBeVisible()
+  await go(page, '/rendez-vous')
+  await expect(page.getByText('Un compte est nécessaire')).toBeVisible()
+  await go(page, '/favoris')
+  await expect(page.getByText('Partage indisponible en mode invité')).toBeVisible()
+  await page.getByRole('button', { name: 'Partager mon dossier' }).click()
+  const dialog = page.getByRole('dialog', { name: 'Un compte est nécessaire' })
+  await expect(dialog.getByRole('button', { name: 'Se connecter' })).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Créer un compte' })).toBeVisible()
+})
+
+test('l’ENT simulé connecte Léa et réinitialiser restaure les données de démo', async ({ page }) => {
+  await go(page, '/connexion')
+  await page.getByRole('button', { name: 'Se connecter avec l’ENT de mon lycée' }).click()
+  await expect(page.getByText('Connexion ENT simulée')).toBeVisible()
+  await go(page, '/favoris')
+  await page.getByRole('button', { name: /Retirer des favoris : BUT Informatique/ }).click()
+  await expect(page.getByRole('link', { name: 'Favoris (1)' })).toBeVisible()
+  await page.getByRole('button', { name: /menu du compte/ }).click()
+  await page.getByRole('button', { name: 'Réinitialiser les données de démo' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Réinitialiser' }).click()
+  await expect(page.getByRole('link', { name: 'Favoris (2)' })).toBeVisible()
+  await go(page, '/compte')
+  await expect(page.getByRole('heading', { name: 'Historique' })).toBeVisible()
+  await expect(page.getByText('Données de démonstration réinitialisées.')).toBeVisible()
+})
+
+test('les chiffres d’intérêt masquent les valeurs inférieures à 10', async ({ page }) => {
+  await loginDemo(page, 'Alain')
+  await go(page, '/etablissement/chiffres')
+  const row = page.getByRole('row', { name: /Prépa intégrée/ })
+  await expect(row.getByText('Moins de 10').first()).toBeVisible()
+  await expect(row.getByText('Masqué')).toBeVisible()
+  await go(page, '/etablissement/profils')
+  await expect(page.getByRole('heading', { name: 'Léa, terminale générale' })).toBeVisible()
+  await expect(page.getByText('Dumont')).toHaveCount(0)
+})
