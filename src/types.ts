@@ -96,6 +96,11 @@ export interface AppState {
   selectedOpenDays: string[]
   liveMessage: string
   messages: Array<{ id: string; from: 'lyceen' | 'conseiller'; text: string; at: string }>
+  publishedFormation?: {
+    parcours: string
+    debouches: string
+    vigilance: string
+  }
   appointment?: {
     advisor: string
     slot: string

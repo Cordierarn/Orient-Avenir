@@ -1,6 +1,6 @@
-import { CalendarClock, CheckCircle2, Filter, Info, School, Send, TriangleAlert } from 'lucide-react'
+import { ArrowRight, Building2, CalendarClock, Check, CheckCircle2, Compass, Filter, GraduationCap, Info, LockKeyhole, Send, TriangleAlert, Users, X } from 'lucide-react'
 import { useState } from 'react'
-import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Alert, Button, Checkbox, CriteriaBar, EthicsBanner, FavoriteToggle, Field, LevelSlider, Modal, Radio, RoleSwitcher, Status, Tag } from './components/ui'
 import { useApp } from './context/AppContext'
 import { appointmentSlots } from './data/appointments'
@@ -13,23 +13,25 @@ import './index.css'
 
 const roleTabs = {
   lyceen: [
-    { to: '/profil/interets', label: 'Profil' },
-    { to: '/pistes', label: 'Pistes' },
+    { to: '/profil/interets', label: 'Mon profil' },
+    { to: '/pistes', label: 'Pistes suggérées' },
     { to: '/comparer', label: 'Comparer' },
-    { to: '/favoris', label: 'Favoris' },
+    { to: '/favoris', label: 'Favoris (2)' },
     { to: '/rendez-vous', label: 'Rendez-vous' },
-    { to: '/echange', label: 'Échange' },
-    { to: '/echeances', label: 'Échéances' },
+    { to: '/echeances', label: 'Échéances (2)' },
+    { to: '/echange', label: 'Découverte' },
   ],
   conseiller: [
     { to: '/conseiller/demandes', label: 'Demandes' },
     { to: '/conseiller/eleves', label: 'Élèves' },
+    { to: '/pistes', label: 'Découverte' },
   ],
   etablissement: [
     { to: '/etablissement/fiches', label: 'Fiches' },
     { to: '/etablissement/chiffres', label: 'Chiffres' },
     { to: '/etablissement/page', label: 'Page' },
     { to: '/etablissement/profils', label: 'Profils' },
+    { to: '/pistes', label: 'Découverte' },
   ],
 }
 
@@ -117,11 +119,13 @@ const ProgramCard = ({ id }: { id: string }) => {
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { state, setRole, resetDemo } = useApp()
+  const location = useLocation()
   return (
     <>
       <header className="topbar">
         <Link to="/" className="logo">
-          <School /> Orient&apos;Avenir
+          <span className="logo-mark"><Compass /></span>
+          <span><strong>Orient&apos;Avenir</strong><small>Explorer, comprendre, comparer</small></span>
         </Link>
         <RoleSwitcher role={state.role} onChange={setRole} />
         <Button variant="ghost" onClick={resetDemo}>
@@ -129,13 +133,13 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         </Button>
       </header>
       <EthicsBanner />
-      <nav className="role-nav" aria-label="Navigation par rôle">
+      {location.pathname !== '/' ? <nav className="role-nav" aria-label="Navigation par rôle">
         {roleTabs[state.role].map((tab) => (
           <NavLink key={tab.to} to={tab.to} className={({ isActive }) => (isActive ? 'active' : '')}>
             {tab.label}
           </NavLink>
         ))}
-      </nav>
+      </nav> : null}
       <main>{children}</main>
       <p className="sr-only" role="status" aria-live="polite">
         {state.liveMessage}
@@ -145,39 +149,56 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 }
 
 const HomePage = () => (
-  <section className="section">
-    <h1>Choisir son après-bac sans se fermer de portes</h1>
-    <p>
-      Prototype étudiant de design des usages. Tout est simulé côté navigateur, sans serveur et avec des données fictives.
-    </p>
-    <div className="row-wrap">
-      <Link to="/profil/interets" className="btn btn-primary">
-        Commencer le questionnaire
-      </Link>
-      <Link to="/pistes" className="btn btn-secondary">
-        Explorer sans questionnaire
-      </Link>
-    </div>
-    <div className="grid cards-3">
-      <article className="card">
-        <h3>Lycéen</h3>
-        <p>Répondre au profil, comprendre les pistes, comparer et préparer un rendez-vous.</p>
+  <section className="home-page">
+    <div className="home-hero">
+      <div className="home-copy">
+        <span className="eyebrow"><span className="eyebrow-dot" /> Plateforme indépendante et gratuite</span>
+        <h1>Trouvez des formations qui vous ressemblent, et comprenez pourquoi.</h1>
+        <p>Répondez à quelques questions, découvrez des pistes expliquées critère par critère, comparez-les, puis préparez votre choix avec votre conseiller. Orient’Avenir ne décide rien à votre place.</p>
+        <div className="row-wrap home-actions">
+          <Link to="/profil/interets" className="btn btn-primary">Commencer le questionnaire <ArrowRight size={18} /></Link>
+          <Link to="/pistes" className="btn btn-secondary">Explorer sans questionnaire</Link>
+        </div>
+        <div className="home-promises">
+          <span><Clock3Icon /> 5 minutes environ</span>
+          <span><LockKeyhole size={19} /> Aucune donnée personnelle</span>
+          <span><Info size={19} /> Chaque piste est expliquée</span>
+        </div>
+      </div>
+      <article className="preview-card">
+        <span className="preview-kicker">APERÇU D’UNE PISTE</span>
+        <div className="space-between preview-title"><h2>BUT Informatique</h2><Status tone="neutral" text="Sélective" /></div>
+        <p>IUT de Valmont · ville moyenne · 3 ans</p>
+        <p className="affinity">Affinité avec vos réponses <strong>●●●●○</strong> <span>4 sur 5</span></p>
+        <div className="preview-criteria">
+          <h3>Pourquoi cette piste ?</h3>
+          <CriteriaBar label="Vos intérêts" value={58} />
+          <CriteriaBar label="Vos spécialités" value={25} />
+          <CriteriaBar label="Vos préférences" value={17} />
+        </div>
+        <p className="preview-note">Les pourcentages montrent le poids de chaque critère, jamais une chance d’admission.</p>
       </article>
-      <article className="card">
-        <h3>Conseiller</h3>
-        <p>Voir les demandes, suivre les dossiers partagés et préparer l’entretien.</p>
-      </article>
-      <article className="card">
-        <h3>Établissement</h3>
-        <p>Publier des fiches transparentes et consulter des chiffres agrégés.</p>
-      </article>
     </div>
-    <div className="grid cards-2">
-      <Alert tone="success">Ce que fait Orient&apos;Avenir : rendre lisibles les choix et leurs critères.</Alert>
-      <Alert tone="warning">Ce que ne fait pas Orient&apos;Avenir : décider, admettre, ni prédire l&apos;admission.</Alert>
+
+    <section className="home-section">
+      <h2>Trois espaces, un même dossier</h2>
+      <p>L’élève garde la main : c’est lui qui choisit ce qu’il partage avec son conseiller.</p>
+      <div className="grid cards-3 home-role-cards">
+        <article className="card home-role-card"><span className="icon-tile"><GraduationCap /></span><h3>Je suis au lycée</h3><p>Questionnaire, pistes expliquées, comparaison et favoris. Vous partagez votre dossier seulement si vous le souhaitez.</p><Link to="/profil/interets">Commencer <ArrowRight size={18} /></Link></article>
+        <article className="card home-role-card"><span className="icon-tile"><Users /></span><h3>J’accompagne des élèves</h3><p>Dossiers partagés, points à discuter et questions pour préparer chaque entretien.</p><Link to="/conseiller/demandes">Ouvrir le suivi <ArrowRight size={18} /></Link></article>
+        <article className="card home-role-card"><span className="icon-tile"><Building2 /></span><h3>Je représente un établissement</h3><p>Fiches formation fiables et à jour, chiffres d’intérêt anonymisés et agrégés.</p><Link to="/etablissement/fiches">Gérer mes fiches <ArrowRight size={18} /></Link></article>
+      </div>
+    </section>
+
+    <div className="grid cards-2 home-trust-grid">
+      <article className="card trust-card"><h3>Ce que fait Orient’Avenir</h3><p><Check /> Propose des pistes à partir de vos réponses</p><p><Check /> Explique chaque piste, critère par critère</p><p><Check /> Ouvre aussi des pistes hors de vos habitudes</p><p><Check /> Partage votre dossier seulement avec votre accord</p></article>
+      <article className="card trust-card"><h3>Ce qu’il ne fait pas</h3><p><X /> Il ne décide d’aucune admission</p><p><X /> Il ne remplace pas la plateforme officielle de candidature</p><p><X /> Il ne classe pas les élèves entre eux</p><p><X /> Il ne revend aucune donnée</p></article>
     </div>
+    <p className="home-footer">Prototype pédagogique · Design des usages 2027 · données fictives, interactions simulées</p>
   </section>
 )
+
+const Clock3Icon = () => <span className="inline-icon"><CalendarClock size={19} /></span>
 
 const InteretsPage = () => {
   const { state, updateState } = useApp()
@@ -187,7 +208,7 @@ const InteretsPage = () => {
       <Alert>
         <Info size={16} /> Pourquoi ces questions ? Mieux comprendre ce qui vous motive au quotidien.
       </Alert>
-      <div className="grid">
+      <div className="grid programs-grid">
         {domains.map((domain) => (
           <LevelSlider
             key={domain.id}
@@ -336,6 +357,9 @@ const DossierPage = () => {
           Passer cette étape
         </Link>
       </div>
+      <Alert tone="success">
+        <CheckCircle2 size={16} /> Votre profil fictif est enregistré automatiquement sur cet appareil.
+      </Alert>
     </section>
   )
 }
@@ -720,22 +744,27 @@ const EcheancesPage = () => {
   )
 }
 
-const ConseillerDemandesPage = () => (
-  <section className="section">
-    <h2>Demandes d’élèves</h2>
-    <div className="card">
-      <p>
-        <strong>{personas.counselors[0].nom}</strong> — Conseiller indépendant
-      </p>
-      <p>{personas.lead.nom} propose Lun 17h et Mer 14h.</p>
-      <Status tone="success" text="Correspond à vos domaines" />
-      <div className="row-wrap">
-        <Button>Accepter Lun 17h</Button>
-        <Button variant="secondary">Laisser à un autre conseiller</Button>
+const ConseillerDemandesPage = () => {
+  const [requestStatus, setRequestStatus] = useState<'pending' | 'accepted' | 'delegated'>('pending')
+  return (
+    <section className="section">
+      <h2>Demandes d’élèves</h2>
+      <div className="card">
+        <p>
+          <strong>{personas.lead.nom}</strong> — Terminale générale, spécialités Maths + NSI
+        </p>
+        <p>Propose Lun 17h et Mer 14h. Souhaite comparer BUT, licence et école d’ingénieurs.</p>
+        <Status tone="success" text="Correspond à vos domaines" />
+        <div className="row-wrap">
+          <Button onClick={() => setRequestStatus('accepted')} disabled={requestStatus !== 'pending'}>Accepter Lun 17h</Button>
+          <Button variant="secondary" onClick={() => setRequestStatus('delegated')} disabled={requestStatus !== 'pending'}>Laisser à un autre conseiller</Button>
+        </div>
+        {requestStatus === 'accepted' ? <Alert tone="success"><CheckCircle2 size={16} /> Demande acceptée. Un message fictif a été envoyé à {personas.lead.nom}.</Alert> : null}
+        {requestStatus === 'delegated' ? <Alert tone="info">Demande transmise à un autre conseiller fictif.</Alert> : null}
       </div>
-    </div>
-  </section>
-)
+    </section>
+  )
+}
 
 const ConseillerElevesPage = () => {
   const { state } = useApp()
@@ -757,11 +786,13 @@ const ConseillerElevesPage = () => {
 }
 
 const EtablissementFichesPage = () => {
+  const { updateState, setLiveMessage } = useApp()
   const [values, setValues] = useState({
     parcours: programs[2].nom,
     debouches: programs[2].debouches.join(', '),
     vigilance: programs[2].vigilance,
   })
+  const [status, setStatus] = useState<'draft' | 'created' | 'published'>('draft')
   return (
     <section className="section">
       <h2>Édition des fiches</h2>
@@ -777,20 +808,48 @@ const EtablissementFichesPage = () => {
         </Field>
         <div className="row-wrap">
           <Button
+            variant="ghost"
+            onClick={() => {
+              setValues({
+                parcours: 'Licence Data & Territoires',
+                debouches: 'Data analyst junior, chargé d’études, master géomatique',
+                vigilance: 'Autonomie importante et bases en mathématiques recommandées.',
+              })
+              setStatus('created')
+            }}
+          >
+            Créer une formation fictive
+          </Button>
+          <Button
             variant="secondary"
-            onClick={() =>
+            onClick={() => {
               setValues({
                 parcours: 'Cycle ingénieur post-bac',
                 debouches: 'Ingénieur logiciel, Ingénieur systèmes, Chef de projet R&D',
                 vigilance: 'Sélection forte et charge de travail élevée.',
               })
-            }
+              setStatus('created')
+            }}
           >
             Remplir avec un exemple
           </Button>
-          <Button>Publier</Button>
+          <Button
+            onClick={() => {
+              if (!values.parcours.trim() || !values.debouches.trim() || !values.vigilance.trim()) {
+                setStatus('draft')
+                return
+              }
+              updateState((current) => ({ ...current, publishedFormation: values }))
+              setLiveMessage('Formation publiée dans la démo')
+              setStatus('published')
+            }}
+          >
+            Publier
+          </Button>
         </div>
       </div>
+      {status === 'created' ? <Alert tone="info"><CheckCircle2 size={16} /> Formation fictive créée dans votre brouillon.</Alert> : null}
+      {status === 'published' ? <Alert tone="success"><CheckCircle2 size={16} /> Formation publiée dans la démo et visible côté lycéen.</Alert> : null}
       <Alert tone="info">Une fiche publiée devient visible côté lycéen.</Alert>
     </section>
   )
@@ -817,16 +876,27 @@ const EtablissementChiffresPage = () => (
   </section>
 )
 
-const EtablissementPagePublique = () => (
-  <section className="section">
-    <h2>Page publique École Aurelis</h2>
-    <div className="card">
-      <p>Parcours : cycle ingénieur post-bac, passerelles BUT / licence / BTS / prépa.</p>
-      <p>Prérequis : base scientifique, curiosité projet, travail collaboratif.</p>
-      <p>Effectifs : promotion 95 étudiants. Événements : forum, salon, portes ouvertes, immersion.</p>
-    </div>
-  </section>
-)
+const EtablissementPagePublique = () => {
+  const { state } = useApp()
+  return (
+    <section className="section">
+      <h2>Page publique École Aurelis</h2>
+      <div className="card">
+        <p>Parcours : cycle ingénieur post-bac, passerelles BUT / licence / BTS / prépa.</p>
+        <p>Prérequis : base scientifique, curiosité projet, travail collaboratif.</p>
+        <p>Effectifs : promotion 95 étudiants. Événements : forum, salon, portes ouvertes, immersion.</p>
+      </div>
+      {state.publishedFormation ? (
+        <div className="card">
+          <Status tone="success" text="Formation publiée" />
+          <h3>{state.publishedFormation.parcours}</h3>
+          <p><strong>Débouchés :</strong> {state.publishedFormation.debouches}</p>
+          <p><strong>Point de vigilance :</strong> {state.publishedFormation.vigilance}</p>
+        </div>
+      ) : <Alert tone="info">Aucune nouvelle formation fictive publiée pour le moment.</Alert>}
+    </section>
+  )
+}
 
 const EtablissementProfilsPage = () => (
   <section className="section">
