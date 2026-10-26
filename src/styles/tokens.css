@@ -1,0 +1,82 @@
+/* Design system Orient’Avenir : toutes les valeurs visuelles sont centralisées ici. */
+:root {
+  /* Couleurs */
+  --color-bg: #f4f6fa;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f8fb;
+  --color-ink: #0f1b33;
+  --color-muted: #56627a;
+  --color-line: #dce1ea;
+  --color-accent: #2543d8;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #e6ebfe;
+  --color-warn-bg: #fff4dd;
+  --color-warn-ink: #5c3b00;
+  --color-ok: #0e6b45;
+  --color-ok-soft: #ddf3e8;
+  --color-bad: #a3281f;
+  --color-bad-soft: #fbe4e1;
+  --color-scrim: rgba(15, 27, 51, 0.55);
+  --color-tag: #edf0f6;
+  --color-ink-panel: #0f1b33;
+
+  /* Polices (avec pile de secours si Google Fonts ne se charge pas) */
+  --font-heading: 'Bricolage Grotesque', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* Échelle typographique : taille / interlignage */
+  --text-display: 46px;
+  --leading-display: 54px;
+  --text-h1: 28px;
+  --leading-h1: 34px;
+  --text-h2: 20px;
+  --leading-h2: 26px;
+  --text-h3: 17px;
+  --leading-h3: 22px;
+  --text-body: 16px;
+  --leading-body: 24px;
+  --text-small: 14px;
+  --leading-small: 20px;
+  --text-overline: 12px;
+  --leading-overline: 16px;
+
+  /* Rayons */
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-pill: 999px;
+
+  /* Ombres (teinte ink) */
+  --shadow-card: 0 1px 2px rgba(15, 27, 51, 0.05), 0 4px 12px rgba(15, 27, 51, 0.05);
+  --shadow-window: 0 8px 16px rgba(15, 27, 51, 0.08), 0 24px 48px rgba(15, 27, 51, 0.18);
+
+  /* Espacements */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Mise en page */
+  --content-max: 1120px;
+  --gutter: 24px;
+  --target-min: 44px;
+  --tabbar-height: 68px;
+  --focus-ring: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-accent);
+}
+
+@media (max-width: 719px) {
+  :root {
+    --gutter: 16px;
+    --text-display: 32px;
+    --leading-display: 38px;
+    --text-h1: 26px;
+    --leading-h1: 32px;
+  }
+}
