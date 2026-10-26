@@ -1,46 +1,72 @@
-name: Build and Deploy Pages
+name: Qualité et déploiement GitHub Pages
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  quality:
+    name: Lint, types, tests et build
+    # Ubuntu 24.04 : version prise en charge par Playwright pour installer Chromium.
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
+      - name: Récupération du code
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
-      - name: Install dependencies
+      - name: Installation déterministe
         run: npm ci
-      - name: Build
+      - name: Lint
+        run: npm run lint
+      - name: Vérification TypeScript
+        run: npm run typecheck
+      - name: Tests unitaires (Vitest)
+        run: npm test
+      - name: Navigateur Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Tests end-to-end (Playwright, build de production)
+        run: npm run test:e2e
+      - name: Rapport Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+      - name: Build de production
         run: npm run build
-      - name: Upload artifact
+      - name: Artefact GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
+    name: Déploiement GitHub Pages
+    # Uniquement sur main, et seulement si toutes les vérifications ont réussi.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: quality
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - name: Déploiement
         id: deployment
+        uses: actions/deploy-pages@v4

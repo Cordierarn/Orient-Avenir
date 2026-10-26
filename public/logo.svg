@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Orient’Avenir">
+  <title>Orient’Avenir</title>
+  <!-- Cadre carré derrière la flèche -->
+  <path d="M38 17V7.5h18.5V26H47" fill="none" stroke="#2543D8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Couronne crantée de la boussole -->
+  <g transform="translate(25 39)" fill="#2543D8">
+    <circle r="17"/>
+    <path d="M0-21.5l3.2 5h-6.4zM0 21.5l3.2-5h-6.4zM-21.5 0l5 3.2v-6.4zM21.5 0l-5 3.2v-6.4z"/>
+    <path d="M0-21.5l3.2 5h-6.4zM0 21.5l3.2-5h-6.4zM-21.5 0l5 3.2v-6.4zM21.5 0l-5 3.2v-6.4z" transform="rotate(45)"/>
+    <circle r="9.5" fill="#FFFFFF"/>
+    <!-- Aiguille -->
+    <path d="M-6.5 6.5L-1.4-1.4 1.4 1.4z"/>
+  </g>
+  <!-- Flèche montante -->
+  <path d="M25 39L49 15" stroke="#FFFFFF" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M25 39L48 16" stroke="#2543D8" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M54 10L42.5 13 51 21.5z" fill="#2543D8" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
