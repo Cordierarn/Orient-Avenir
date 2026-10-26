@@ -15,4 +15,5 @@ export const logout = async (page: Page) => {
   await expect(page).toHaveURL(/#\/connexion/)
 }
 
-export const expectPath = (page: Page, path: string) => expect(page).toHaveURL(new RegExp(`#${path.replace(/\//g, '\\/')}$`))
+/** Vérifie la route courante ; les paramètres de requête (ex. ?fiche=…) sont acceptés. */
+export const expectPath = (page: Page, path: string) => expect(page).toHaveURL(new RegExp(`#${path.replace(/\//g, '\\/')}(\\?.*)?$`))
