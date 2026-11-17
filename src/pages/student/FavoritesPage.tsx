@@ -10,7 +10,7 @@ import { useAction, useRepo } from '../../hooks/useRepo'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { formatDate, formatDayMonth, formatSlot } from '../../lib/dates'
 import type { PublicUser } from '../../types'
-import { AccountRequiredModal, SwitchSpaceModal } from '../../layouts/AccountModals'
+import { AccountRequiredModal } from '../../layouts/AccountModals'
 
 const NoteEditor = ({ userId, favorite }: { userId: string; favorite: FavoriteView }) => {
   const [note, setNote] = useState(favorite.note)
@@ -223,7 +223,6 @@ const RequestPanel = ({ user, view }: { user: PublicUser; view: StudentRequestVi
   const { notify } = useToast()
   const shares = useRepo(() => shareRepo.getShares(user.id), [user.id])
   const [confirmRevoke, setConfirmRevoke] = useState(false)
-  const [demoSpace, setDemoSpace] = useState(false)
   const sharedAt = shares.data?.conseiller?.active ? shares.data.conseiller.grantedAt : undefined
   const accepted = view.request.status === 'acceptee' && view.appointment
   const counselorFirst = view.counselor?.name.split(' ')[0] ?? view.preferredCounselor?.name.split(' ')[0]
@@ -274,14 +273,9 @@ const RequestPanel = ({ user, view }: { user: PublicUser; view: StudentRequestVi
       <p className="small strong">Suivi de votre demande</p>
       <RequestTracking view={view} sharedAt={sharedAt} />
       {accepted ? (
-        <>
-          <LinkButton to="/echange" block arrow>
-            Ouvrir l’échange avec {counselorFirst}
-          </LinkButton>
-          <Button variant="secondary" block onClick={() => setDemoSpace(true)}>
-            Voir côté conseiller (démo)
-          </Button>
-        </>
+        <LinkButton to="/echange" block arrow>
+          Ouvrir l’échange avec {counselorFirst}
+        </LinkButton>
       ) : view.request.status === 'en_attente' ? (
         <Button variant="secondary" block onClick={() => void cancel.run()} loading={cancel.pending}>
           Annuler la demande
@@ -323,7 +317,6 @@ const RequestPanel = ({ user, view }: { user: PublicUser; view: StudentRequestVi
           </>
         }
       />
-      {demoSpace ? <SwitchSpaceModal role="conseiller" onClose={() => setDemoSpace(false)} /> : null}
     </aside>
   )
 }

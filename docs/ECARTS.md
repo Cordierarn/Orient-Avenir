@@ -9,7 +9,7 @@ Chaque écart est volontaire et motivé par une règle du cahier des charges (s�
 | Tous | Couleur accent | `#2543D8` (cahier des charges) au lieu du bleu plus terne rendu dans l'export JPG | L'export des maquettes décale les couleurs ; le design system fait foi | Contraste renforcé | — |
 | Tous | Logo | SVG redessiné d'après l'image fournie (`public/logo.svg`) | Aucun fichier vectoriel fourni | Aucun | Remplacer par le fichier source du logo s'il existe |
 | Pages connectées | Menu du compte | Avatar + nom à droite du sélecteur de rôle (absent des maquettes) | Exigé : historique, changer de compte, réinitialiser, se déconnecter | Une commande de plus dans l'en-tête | — |
-| Pages connectées | Sélecteur « Je suis » | Choisir un autre rôle ouvre « Changer d'espace » | Un compte ne peut accéder qu'aux routes de son rôle | Pas de bascule instantanée sans compte | — |
+| Pages connectées | Sélecteur « Je suis » | Masqué pour les comptes lycéens (et le mode invité) ; pour les comptes conseiller et établissement, choisir un autre rôle ouvre « Changer d'espace » | Un lycéen ne voit que son parcours ; un compte ne peut accéder qu'aux routes de son rôle | Pas de bascule instantanée sans compte | — |
 | Tous | Dates des maquettes | Les maquettes associent « Lun. 21 oct. », « Jeu. 24 oct. » à 2026, alors que le 21/10/2026 est un mercredi | Les dates affichées sont calculées (vraies dates) ; les créneaux du seed sont fixés en novembre 2026 | Jours de semaine corrects | — |
 | Tous | Genre | Formulations neutres (« Inscrit·e », « ses attentes ») là où la maquette accorde au féminin | Les textes générés ne présument pas du genre d'un élève | Aucun | — |
 | Nouvelles routes | `/mot-de-passe-oublie`, `/compte`, `/ecole/:id`, `/conseiller/profil`, `/etablissement/rattachement` | Pages sans maquette | Exigées (mot de passe oublié, historique, page publique, premiers parcours conseiller et établissement) | — | Maquetter ces écrans |
@@ -41,7 +41,7 @@ Chaque écart est volontaire et motivé par une règle du cahier des charges (s�
 | 07 Fiche | Portes ouvertes | Bouton « Ajouter à mes échéances » fonctionnel | — | — | — |
 | 08 Comparer | Lignes « Écart » | Calculées : durée, sélectivité, profils proches, alternance, part de pratique (≥ 25 points), coût | Règle explicite plutôt que lignes fixes | 2 lignes marquées en plus pour le jeu de la maquette | — |
 | 08 Comparer | Dates de mise à jour | Licence Informatique 04/09/2026 et Cycle ingénieur 18/09/2026 (dates de Découverte) | Les maquettes 08 et 14 se contredisent | — | — |
-| 09/11 Favoris | Panneau de droite | Trois états réels : partage (09), demande en attente, rendez-vous confirmé (11) | Reflète l'état stocké | — | — |
+| 09/11 Favoris | Panneau de droite | Trois états réels : partage (09), demande en attente, rendez-vous confirmé (11) ; pas de bouton « Voir côté conseiller (démo) » | Reflète l'état stocké ; un lycéen ne voit que son parcours | — | — |
 | 10 Rendez-vous | Mention de démo | « Connectez-vous ensuite en tant que conseiller pour répondre » au lieu de « la réponse du conseiller est simulée » | La réponse passe réellement par le compte conseiller | — | — |
 | 10 Rendez-vous | Consentement | Case de partage ajoutée si le dossier n'est pas partagé | Une demande n'est visible d'un conseiller qu'avec consentement actif | — | — |
 | 10 Rendez-vous | Créneaux | Semaine suivant la date du jour (réelle ou simulée) | Créneaux toujours à venir | — | — |
@@ -50,7 +50,7 @@ Chaque écart est volontaire et motivé par une règle du cahier des charges (s�
 | 13 Échéances | Compteur et prochaine échéance | Compteur = échéances personnelles à venir ; « dans N jours » calculé avec la date du jour | Données réelles (la maquette suppose le 20/10/2026) | — | — |
 | 13 Échéances | « Date du jour (démo) » | Carte ajoutée | Exigée pour simuler l'approche d'une échéance | — | — |
 | 13 Échéances | « Ajouter à mon agenda » | Télécharge un fichier `.ics` local | Aucun envoi externe | — | — |
-| 25 Accueil mobile | « Votre espace » | Mêmes cartes qu'en desktop (empilées) au lieu de lignes compactes avec chevron | Une seule implémentation responsive | Défilement un peu plus long | Variante compacte |
+| 02/25 Accueil | « Trois espaces, un même dossier » / « Votre espace » | Remplacé par « Votre parcours » : 3 étapes du lycéen (questionnaire, pistes, comparer et favoris), cartes empilées en mobile | Un lycéen ne voit que son parcours, sans entrée vers les espaces conseiller et établissement | Défilement un peu plus long en mobile | Variante compacte |
 | 26 Pistes mobile | « Pourquoi cette piste ? » | Toujours déplié (la maquette le replie à partir de la 2e piste) | Simplicité, contenu explicatif toujours visible | Défilement plus long | Accordéon mobile |
 
 ## Découverte (commune)
