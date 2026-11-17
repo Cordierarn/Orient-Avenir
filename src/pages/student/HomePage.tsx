@@ -1,19 +1,15 @@
-import { Building2, Check, ChevronRight, Clock, GraduationCap, Lightbulb, Lock, Users, X } from 'lucide-react'
-import { useState } from 'react'
+import { Check, ChevronRight, Clock, Columns2, Compass, GraduationCap, Lightbulb, Lock, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useCurrentUser } from '../../auth/AuthContext'
 import { AffinityDots, CriteriaBar, IconChip, LinkButton, Status, Tag } from '../../components'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import { usePistes } from '../../hooks/useStudent'
-import { SwitchSpaceModal } from '../../layouts/AccountModals'
-import type { Role } from '../../types'
 import { cityText, selectivityShort } from './FormationParts'
 
 export const HomePage = () => {
   usePageTitle('Accueil')
   const user = useCurrentUser()
   const { ranked, profile } = usePistes(user.id)
-  const [space, setSpace] = useState<Role | null>(null)
   const answered = Boolean(profile && Object.keys(profile.interests).length)
   const top = answered ? ranked?.[0] : undefined
 
@@ -101,45 +97,28 @@ export const HomePage = () => {
         </aside>
       </section>
 
-      <section className="stack" aria-labelledby="spaces-title">
+      <section className="stack" aria-labelledby="journey-title">
         <div>
-          <h2 id="spaces-title" className="h1">
-            <span className="desktop-only">Trois espaces, un même dossier</span>
-            <span className="mobile-only">Votre espace</span>
+          <h2 id="journey-title" className="h1">
+            Votre parcours
           </h2>
-          <p className="lead desktop-only">L’élève garde la main : c’est lui qui choisit ce qu’il partage avec son conseiller.</p>
+          <p className="lead desktop-only">Vous gardez la main : c’est vous qui choisissez ce que vous partagez avec un conseiller.</p>
         </div>
         <div className="grid-3">
-          <article className="card card-lg stack">
-            <IconChip>
-              <GraduationCap size={20} />
-            </IconChip>
-            <h3 className="h2">Je suis au lycée</h3>
-            <p className="small muted">Questionnaire, pistes expliquées, comparaison et favoris. Vous partagez votre dossier seulement si vous le souhaitez.</p>
-            <Link className="link-button" to="/profil/interets">
-              Commencer <ChevronRight size={16} aria-hidden="true" />
-            </Link>
-          </article>
-          <article className="card card-lg stack">
-            <IconChip>
-              <Users size={20} />
-            </IconChip>
-            <h3 className="h2">J’accompagne des élèves</h3>
-            <p className="small muted">Dossiers partagés, points à discuter et questions pour préparer chaque entretien.</p>
-            <button type="button" className="link-button" onClick={() => setSpace('conseiller')}>
-              Ouvrir le suivi <ChevronRight size={16} aria-hidden="true" />
-            </button>
-          </article>
-          <article className="card card-lg stack">
-            <IconChip>
-              <Building2 size={20} />
-            </IconChip>
-            <h3 className="h2">Je représente un établissement</h3>
-            <p className="small muted">Fiches formation fiables et à jour, chiffres d’intérêt anonymisés et agrégés.</p>
-            <button type="button" className="link-button" onClick={() => setSpace('etablissement')}>
-              Gérer mes fiches <ChevronRight size={16} aria-hidden="true" />
-            </button>
-          </article>
+          {[
+            { icon: <GraduationCap size={20} />, title: '1. Répondez au questionnaire', text: 'Vos intérêts, vos spécialités et vos préférences, en 5 minutes environ.', to: '/profil/interets', cta: answered ? 'Modifier mes réponses' : 'Commencer' },
+            { icon: <Compass size={20} />, title: '2. Explorez vos pistes', text: 'Chaque piste est expliquée critère par critère, avec ses points de vigilance.', to: '/pistes', cta: 'Voir mes pistes' },
+            { icon: <Columns2 size={20} />, title: '3. Comparez et gardez vos favoris', text: 'Comparez jusqu’à 3 formations, annotez vos favoris, puis partagez-les si vous le souhaitez.', to: '/comparer', cta: 'Comparer' },
+          ].map((step) => (
+            <article key={step.to} className="card card-lg stack">
+              <IconChip>{step.icon}</IconChip>
+              <h3 className="h2">{step.title}</h3>
+              <p className="small muted">{step.text}</p>
+              <Link className="link-button" to={step.to}>
+                {step.cta} <ChevronRight size={16} aria-hidden="true" />
+              </Link>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -181,7 +160,6 @@ export const HomePage = () => {
           <Tag>Mode invité</Tag> Vos réponses restent sur cet appareil.
         </p>
       ) : null}
-      {space ? <SwitchSpaceModal role={space} onClose={() => setSpace(null)} /> : null}
     </div>
   )
 }

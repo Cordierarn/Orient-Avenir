@@ -7,6 +7,10 @@ test.describe('Parcours 1 : questionnaire, pistes, comparaison et favoris de Lé
     await expectPath(page, '/')
     // En desktop, la barre d'onglets mobile n'est pas affichée.
     await expect(page.getByRole('navigation', { name: 'Navigation mobile' })).toBeHidden()
+    // Un lycéen ne voit que son parcours : ni sélecteur d'espace, ni raccourci vers les espaces conseiller et établissement.
+    await expect(page.getByRole('group', { name: 'Je suis :' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Conseiller' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Établissement' })).toHaveCount(0)
 
     // Questionnaire : modification d'une réponse au clavier.
     await page.getByRole('link', { name: 'Reprendre le questionnaire' }).click()

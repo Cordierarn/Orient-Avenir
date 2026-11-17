@@ -160,6 +160,8 @@ export const Header = ({ showTabs = true, backTo }: HeaderProps) => {
   }
 
   const home = user ? homeFor(user) : '/connexion'
+  // Un lycéen ne voit que son parcours : pas de sélecteur vers les espaces conseiller et établissement.
+  const showRoleSwitcher = user?.role !== 'lyceen'
 
   return (
     <header className="site-header container">
@@ -177,9 +179,11 @@ export const Header = ({ showTabs = true, backTo }: HeaderProps) => {
           <Logo to={home} />
         )}
         <div className="header-actions">
-          <span className="desktop-only">
-            <RoleSwitcher active={user?.role ?? null} onSelect={selectRole} />
-          </span>
+          {showRoleSwitcher ? (
+            <span className="desktop-only">
+              <RoleSwitcher active={user?.role ?? null} onSelect={selectRole} />
+            </span>
+          ) : null}
           {user?.isGuest ? (
             <span className="desktop-only">
               <Status tone="warning">Mode invité</Status>
@@ -205,12 +209,14 @@ export const Header = ({ showTabs = true, backTo }: HeaderProps) => {
       ) : null}
 
       <Modal open={drawerOpen} title="Menu" onClose={() => setDrawerOpen(false)} closeLabel="Fermer le menu">
-        <div className="drawer-section">
-          <RoleSwitcher active={user?.role ?? null} onSelect={(role) => {
-            setDrawerOpen(false)
-            selectRole(role)
-          }} />
-        </div>
+        {showRoleSwitcher ? (
+          <div className="drawer-section">
+            <RoleSwitcher active={user?.role ?? null} onSelect={(role) => {
+              setDrawerOpen(false)
+              selectRole(role)
+            }} />
+          </div>
+        ) : null}
         {tabs.length ? (
           <nav className="drawer-section drawer-nav" aria-label="Pages de l’espace">
             {tabs.map((tab) => {
